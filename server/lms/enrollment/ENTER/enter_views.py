@@ -7,7 +7,9 @@ from rest_framework.authentication import TokenAuthentication
 from  ...models  import  StudentProfile,TeacherProfile
 from  django.shortcuts import  get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-
+import  redis
+import  json
+r=redis.Redis(host='localhost',port=6379,db=0)
 
 @csrf_exempt
 @api_view(['POST'])
@@ -15,5 +17,16 @@ from django.views.decorators.csrf import csrf_exempt
 def enroll_in_teacher(request, teacher_id):
     student = get_object_or_404(StudentProfile, user=request.user)
     teacher = get_object_or_404(TeacherProfile, id=teacher_id)
+
+    # Add the teacher to the student's enrolled_teachers
     student.enrolled_teachers.add(teacher)
+
+    # Rebuild the student list and cache it
+    cache_key = f"teacher:{teacher.id}:students"
+    students = teacher.enrolled_students.all()
+    student_data = [{'name': s.name, 'email': s.email} for s in students]
+
+    # Cache the updated data for 1 hour (3600 seconds)
+    r.setex(cache_key, 3600, json.dumps(student_data))
+
     return Response({"message": f"Enrolled in {teacher.name}'s course."})

@@ -7,6 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+import  redis
+
+r=redis.Redis(host='localhost' , port=6379 ,  db=0)
 
 @csrf_exempt
 @api_view(['POST'])
@@ -15,4 +18,6 @@ def exit_from_teacher(request,teacher_id):
     student  =  get_object_or_404(StudentProfile,user=request.user)
     teacher=get_object_or_404(TeacherProfile,id=teacher_id)
     student.enrolled_teachers.remove(teacher)
+    cache_key =  f"teacher:{teacher.id}:students"
+    r.delete(cache_key)
     return  JsonResponse({'message':f"Exited from  {teacher.name}'s course"})
