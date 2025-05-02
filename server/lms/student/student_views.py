@@ -20,11 +20,11 @@ def get_teachers(request):
             return  JsonResponse({'teacher':teachers},safe=False)
 
         else:
-            teachers =  TeacherProfile.objects.all().values('name','subject','duration','fees')
+            teachers =  TeacherProfile.objects.all().values('name','subject','duration','fees','id')
             teachers_list = []
             for teacher in  teachers:
                 teachers_list.append({
-                    
+                    'id':teacher['id'],
                     'name':teacher['name'],
                     'subject':teacher['subject'],
                     'fees':str(teacher['fees']),
@@ -34,32 +34,32 @@ def get_teachers(request):
 
             return  JsonResponse({'teacher':teachers_list},safe=False)
         
-
 @csrf_exempt
-def search_teachers( request ):
+def search_teachers(request):
     if request.method == 'GET':
-        subject  =  request.GET.get('subject') #getting the subject param from the url  
+        subject = request.GET.get('subject')
         if not subject:
-            return  JsonResponse({'error':'subject parameter is  required'}, status = 400)
+            return JsonResponse({'error': 'subject parameter is required'}, status=400)
 
-        cache_key =  f'teachers_search_{subject.lower()}'
-        cached_teachers =  r.get(cache_key)
+        cache_key = f'teachers_search_{subject.lower()}'
+        cached_teachers = r.get(cache_key)
 
         if cached_teachers:
-            teachers  =  json.loads(cached_teachers)
-            return JsonResponse({'teacher':teachers},safe=False)
-        
+            print("From cache")
+            teachers = json.loads(cached_teachers)
         else:
-            teachers  = TeacherProfile.objects.filter(subject__icontains= subject).values('name', 'subject', 'duration', 'fees')
-            teachers_list = []
-            for teacher  in teachers:
-                teachers_list.append({
-                    'name':teacher['name'],
-                    'subject':teacher['subject'],
-                    'fees':str(teacher['fees']),
-                    'duration':teacher['duration']
-                    
-                })
-                
-            r.set(cache_key,json.dumps(teachers_list),ex=3600)
-            return JsonResponse({'teacher': teachers_list}, safe=False)
+            print("From DB")
+            teachers = TeacherProfile.objects.filter(subject__icontains=subject).values('id', 'name', 'subject', 'duration', 'fees')
+            teachers = [{
+                'id': teacher['id'],
+                'name': teacher['name'],
+                'subject': teacher['subject'],
+                'fees': str(teacher['fees']),
+                'duration': teacher['duration']
+            } for teacher in teachers]
+            r.set(cache_key, json.dumps(teachers), ex=3600)
+
+        # Ensure ID is present and passed as a number
+
+
+        return JsonResponse({'teacher': teachers}, safe=False)
