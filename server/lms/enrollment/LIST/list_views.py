@@ -24,7 +24,7 @@ def list_teacher_enrollments(request):
     else:
         
         students =  teacher.enrolled_students.all()
-        student_data = [{'name':student.name , 'email':student.email} for student in students]
+        student_data = [{'name':student.name , 'email':student.email,'gender':student.gender , 'phone_number':student.phone_number ,'id':student.id} for student in students]
         r.setex(cache_key,3600,json.dumps(student_data))
     
     return JsonResponse({"teacher": teacher.name, "students": student_data})
