@@ -24,7 +24,7 @@ def enroll_in_teacher(request, teacher_id):
     # Rebuild the student list and cache it
     cache_key = f"teacher:{teacher.id}:students"
     students = teacher.enrolled_students.all()
-    student_data = [{'name': s.name, 'email': s.email} for s in students]
+    student_data = [{'name': s.name, 'email': s.email , 'gender':s.gender, 'phone_number':s.phone_number,'id':s.id} for s in students]
 
     # Cache the updated data for 1 hour (3600 seconds)
     r.setex(cache_key, 3600, json.dumps(student_data))

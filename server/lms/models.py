@@ -10,11 +10,12 @@ class StudentProfile(models.Model):
         ('female','Female'),
         ('other' , 'Other')
     )
-    user  =  models.OneToOneField(User,on_delete=models.CASCADE)
+    user  =  models.ForeignKey(User,on_delete=models.CASCADE)
     name =  models.CharField(max_length=100)
     phone_number  =models.CharField(max_length=20)
     email = models.EmailField()
     gender=models.CharField(max_length=10,choices=GENDER_CHOICES)
+    enrolled_teachers=models.ManyToManyField('TeacherProfile',blank=True,related_name='enrolled_students')
 
     def __str__(self):
         return f"Student: {self.user.username}"

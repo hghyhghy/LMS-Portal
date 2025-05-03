@@ -15,6 +15,21 @@ def convert_decimal_to_float(obj):
         return float(obj)
     raise TypeError
 
+@csrf_exempt
+def verify_admin_passkey(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            admin_passkey = data.get('admin_passkey')
+            if str(admin_passkey) == "1111":
+                return JsonResponse({'message': 'Verified'}, status=200)
+            else:
+                return JsonResponse({'message': 'Invalid passkey'}, status=403)
+        except json.JSONDecodeError:
+            return JsonResponse({'message': 'Invalid JSON'}, status=400)
+    
+    return JsonResponse({'message': 'Invalid HTTP method'}, status=405)
+
 @csrf_exempt 
 def get_teacher_profile(request):
     
@@ -43,7 +58,7 @@ def get_teacher_profile(request):
         cache_profile =  r.get(cache_key)
         if cache_profile:
             profile_data = json.loads(cache_profile)
-            return  JsonResponse({'teacher profile': profile_data},status=200)
+            return  JsonResponse({'teacher_profile': profile_data},status=200)
         
         try:
             teacher_profile =  TeacherProfile.objects.get(user_id=user_id)
