@@ -36,6 +36,9 @@ def update_student_profile(request):
             student_profile.save()
             cache_key  = f'student_profile_{student_profile.user_id}'
             r.delete(cache_key)
+            teacher_ids=  student_profile.enrolled_teachers.values_list('id',flat=True)
+            for teavcher_id in teacher_ids:
+                r.delete(f'teacher:{teavcher_id}:students')
             return JsonResponse({'message':'Profile updated successfully'},status=200)
 
         except  ObjectDoesNotExist:
