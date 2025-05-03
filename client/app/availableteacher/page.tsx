@@ -3,8 +3,12 @@ import useSWR from 'swr';
 import axios from 'axios';
 import Image from 'next/image';
 import { useState } from 'react';
+import enrollInCourse from '../enrollmentapi/ENTER/entry';
+import exitFromCourse from '../enrollmentapi/EXIT/exit';
+import { IoMdTime } from "react-icons/io";
 
 type Teacher = {
+  id:number,
   name: string;
   subject: string;
   fees: string;
@@ -22,6 +26,9 @@ export default function TeachersListPage() {
   const [searchInput, setSearchInput] = useState('');
   const [apiUrl, setApiUrl] = useState(`${baseApi}/get-teachers/`);
   const [isSearching, setIsSearching] = useState(false);
+  const [message, setMessage] = useState("")
+  const [enrollStatus, setEnrollStatus] = useState<Record<number, 'idle' | 'loading' | 'enrolled'>>({});
+
 
   const { data: teachers = [], error, isLoading, mutate } = useSWR(apiUrl, fetcher);
 
@@ -38,6 +45,40 @@ export default function TeachersListPage() {
       setSearchInput('')
     }, 500); // small timeout to show loading spinner smoothly
   };
+
+  const handleEnroll = async (id: number) => {
+    setEnrollStatus((prev) => ({ ...prev, [id]: 'loading' }));
+    try {
+      // Simulate delay for UX feedback
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // 1.5 seconds delay
+  
+      const res = await enrollInCourse(id) as { message: string };
+      setMessage(res.message);
+      setEnrollStatus((prev) => ({ ...prev, [id]: 'enrolled' }));
+    } catch (error) {
+      console.log(error);
+      setMessage('Error enrolling course');
+      setEnrollStatus((prev) => ({ ...prev, [id]: 'idle' }));
+    }
+  };
+  
+  
+  const handleExit = async (id: number) => {
+    setEnrollStatus((prev) => ({ ...prev, [id]: 'loading' }));
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulated delay
+  
+      const res = await exitFromCourse(id) as { message: string };
+      setMessage(res.message);
+      setEnrollStatus((prev) => ({ ...prev, [id]: 'idle' }));
+    } catch (error) {
+      console.log(error);
+      setMessage('Error exiting course');
+      setEnrollStatus((prev) => ({ ...prev, [id]: 'enrolled' }));
+    }
+  };
+  
+  
 
   if (isLoading || isSearching) {
     return <div className="text-center p-10 text-xl">Loading teachers...</div>;
@@ -77,8 +118,8 @@ export default function TeachersListPage() {
           return (
             <div
               key={index}
-              className="border border-gray-300 rounded shadow-md hover:shadow-xl transition h-[25rem] w-[20rem] flex flex-col cursor-pointer"
-            >
+              className="border border-gray-300 rounded shadow-md hover:shadow-xl transition h-[27rem] w-[20rem] flex flex-col cursor-pointer"
+            > 
               <div>
                 <Image
                   src="/aiteacher.jpeg"
@@ -105,11 +146,42 @@ export default function TeachersListPage() {
                 <div>
                   <h2 className="mt-1 font-semibold font-sans">₹ {teacher.fees}</h2>
                 </div>
-                <div className="mt-2">
-                  <button className="bg-blue-800 px-1 rounded text-gray-200">
-                    Premium
-                  </button>
+                <div className=' flex flex-row gap-1'>
+                  <strong className=' text-blue-700 mt-1'>
+                  <IoMdTime className='  text-xl mt-[0.2rem]' /> 
+                  </strong>
+                  <h2 className="mt-1 font-normal text-gray-700 font-sans text-1xl ">{teacher.duration}</h2>
                 </div>
+                <div className="mt-2 space-x-2 flex flex-row gap-2">
+  <button
+    onClick={() => handleEnroll(teacher.id)}
+    className={`${
+      enrollStatus[teacher.id] === 'enrolled'
+        ? 'bg-gray-600 cursor-not-allowed'
+        : 'bg-green-700 hover:bg-green-800 cursor-pointer'
+    } text-white px-3 py-1 rounded`}
+    disabled={enrollStatus[teacher.id] === 'loading' || enrollStatus[teacher.id] === 'enrolled'}
+  >
+    {enrollStatus[teacher.id] === 'loading'
+      ? 'Enrolling...'
+      : enrollStatus[teacher.id] === 'enrolled'
+      ? 'Enrolled'
+      : 'Enroll'}
+  </button>
+
+  <button
+    onClick={() => handleExit(teacher.id)}
+    className={`${
+      enrollStatus[teacher.id] !== 'enrolled'
+        ? 'bg-gray-600 cursor-not-allowed'
+        : 'bg-red-700 hover:bg-red-800 cursor-pointer'
+    } text-white px-3 py-1 rounded`}
+    disabled={enrollStatus[teacher.id] !== 'enrolled'}
+  >
+    {enrollStatus[teacher.id] === 'loading' ? 'Exiting...' : 'Exit'}
+  </button>
+</div>
+
               </div>
             </div>
           );

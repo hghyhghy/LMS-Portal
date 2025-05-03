@@ -46,6 +46,12 @@ const page = () => {
         >
             Teacher
         </button>
+        <button
+        onClick={() => router.push('/teacherprofile')}
+        className='  bg-blue-500   p-5  text-2xl cursor-pointer '
+        >
+            Your Profile
+        </button>
         </div>
 
     </div>
