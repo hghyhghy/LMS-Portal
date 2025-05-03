@@ -35,10 +35,13 @@ def  delete_student_profile(request):
 
         try:
             student_profile =  StudentProfile.objects.get(user_id=user_id)
+            teacher_ids =  list(student_profile.enrolled_teachers.values_list('id',flat=True))
             student_profile.delete()
 
             cache_key =  f'student_profile_{user_id}'
             r.delete(cache_key)
+            for teacher_id in teacher_ids:
+                r.delete(f"teacher:{teacher_id}:students")
             
             return  JsonResponse({'message':'Student profile deleted successfully'}, status =200)
 

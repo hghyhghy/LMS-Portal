@@ -10,7 +10,7 @@ class StudentProfile(models.Model):
         ('female','Female'),
         ('other' , 'Other')
     )
-    user  =  models.ForeignKey(User,on_delete=models.CASCADE)
+    user  =  models.OneToOneField(User,on_delete=models.CASCADE)
     name =  models.CharField(max_length=100)
     phone_number  =models.CharField(max_length=20)
     email = models.EmailField()
