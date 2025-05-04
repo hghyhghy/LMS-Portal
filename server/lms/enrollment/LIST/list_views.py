@@ -18,6 +18,10 @@ r=redis.Redis(host='localhost' , port=6379 ,  db=0)
 def list_teacher_enrollments(request):
     teacher =  get_object_or_404(TeacherProfile, user=request.user)
     cache_key =  f"teacher:{teacher.id}:students"
+    cache_key_seats =f"teacher:{teacher.id}:available_seats"
+    
+    students_data = None
+    seats = None
     cached_data  =  r.get(cache_key)
     if cached_data:
         student_data  =  json.loads(cached_data)
@@ -26,6 +30,13 @@ def list_teacher_enrollments(request):
         students =  teacher.enrolled_students.all()
         student_data = [{'name':student.name , 'email':student.email,'gender':student.gender , 'phone_number':student.phone_number ,'id':student.id  } for student in students]
         r.setex(cache_key,3600,json.dumps(student_data))
+        
+    if r.exists(cache_key_seats):
+        seats =  int(r.get(cache_key_seats))
+    else:
+        max_capacity = teacher.max_students if hasattr(teacher, 'max_students') else 10
+        current_enrolled = teacher.enrolled_students.count()
+        seats = max_capacity - current_enrolled
+        r.set(cache_key_seats, seats)
     
-    current_seats =  teacher.seats
-    return JsonResponse({"teacher": teacher.name, "students": student_data,  "Available Seats":current_seats})
+    return JsonResponse({"teacher": teacher.name, "students": student_data,  "Available_Seats":seats})

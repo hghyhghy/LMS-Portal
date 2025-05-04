@@ -49,7 +49,4 @@ urlpatterns = [
     path('verify-passky/',verify_admin_passkey , name='verify-admin-passkey'),
     path('remove-student/<int:student_id>/', remove_student_from_enrollment, name='remove_student'),
 
-    
-
-
 ]
