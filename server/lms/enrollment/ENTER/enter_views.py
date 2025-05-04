@@ -35,5 +35,10 @@ def enroll_in_teacher(request, teacher_id):
 
     # Cache the updated data for 1 hour (3600 seconds)
     r.setex(cache_key, 3600, json.dumps(student_data))
+    max_capacity = teacher.max_students if hasattr(teacher, 'max_students') else 10
+    current_enrolled = teacher.enrolled_students.count()
+    available_seats = max_capacity - current_enrolled
+    cache_key_seats = f"teacher:{teacher.id}:students:available_seats"
+    r.set(cache_key_seats, available_seats)
 
-    return Response({"message": f"Enrolled in {teacher.name}'s course and  have {teacher.seats} seats now."})
+    return Response({"message": f"Enrolled in {teacher.name}'s course and  have Available seats: {available_seats}."})

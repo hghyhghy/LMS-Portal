@@ -26,8 +26,10 @@ def remove_student_from_enrollment(request,student_id):
         max_capacity  =  teacher.max_students if hasattr(teacher, 'max_students') else 10
         current_enrolled  =  teacher.enrolled_students.count()
         available_seats =  max_capacity - current_enrolled
+        cache_key_students  =  f"teacher:{teacher.id}:students"
         cache_key_seats = f"teacher:{teacher.id}:students:available_seats"
         r.set(cache_key_seats, available_seats)
+        r.delete(cache_key_students)
 
 
         return JsonResponse({'message': f"{student.name} has been removed from your class."})
