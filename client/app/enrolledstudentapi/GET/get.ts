@@ -12,7 +12,10 @@ export   interface Student {
 
 export  interface  StudentResponse {
     teacher :  string,
-    students:Student[]
+    students:Student[],
+    Available_Seats:number,
+
+    
 }
 
 const token  = Cookies.get('access')

@@ -27,6 +27,7 @@ export  default  function  Profilepage() {
     const [students, setStudents] = useState<Student[]>([]);
     const [activeTab, setActiveTab] = useState<'profile' | 'students'>('profile');
     const [studentMessage, setStudentMessage] = useState("");
+    const [availableSeats, setAvailableSeats] = useState <number |  null>(null)
 
     const handleVerify = async() =>  {
         try {
@@ -72,6 +73,7 @@ export  default  function  Profilepage() {
         try {
             const data  =  await  fetchStudents()
             setStudents(data.students)
+            setAvailableSeats(data.Available_Seats)
         } catch (error:any) {
                 setStudentMessage(error.message)
         }
@@ -234,6 +236,11 @@ export  default  function  Profilepage() {
         ) : (
 <div className=" w-full p-2 ">
   <h2 className="text-2xl font-semibold mb-6 absolute top-10   right-[40rem]">Enrolled Students</h2>
+  {availableSeats !==  null && (
+    <p  className="text-lg text-green-400 font-mono mb-4 ml-4">
+         Available Seats: {availableSeats}
+    </p>
+  )}
   {studentMessage && <p className="text-red-600 mb-4">{studentMessage}</p>}
   {students.length === 0 ? (
     <p>No students enrolled.</p>
@@ -249,7 +256,7 @@ export  default  function  Profilepage() {
       {students.map((student, index) => (
         <div
           key={index}
-          className="flex border-b font-semibold border-gray-500 even:bg-gray-800 odd:bg-white text-gray-400"
+          className="flex border-b font-semibold border-gray-500  text-gray-400 "
         >
           <div className="w-1/4 px-4 py-3">{student.name}</div>
           <div className="w-1/4 px-10 py-3">{student.gender}</div>
@@ -267,7 +274,7 @@ export  default  function  Profilepage() {
 
             }
           }}
-          className="bg-red-600 text-white px-3 py-1 rounded ml-4 text-sm hover:bg-red-700 cursor-pointer h-"
+          className="bg-red-600 text-white px-3 py-1 rounded ml-4 text-sm hover:bg-red-700 cursor-pointer mt-1"
 
           >     
                 Remove 
