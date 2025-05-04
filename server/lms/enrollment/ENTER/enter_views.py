@@ -17,9 +17,16 @@ r=redis.Redis(host='localhost',port=6379,db=0)
 def enroll_in_teacher(request, teacher_id):
     student = get_object_or_404(StudentProfile, user=request.user)
     teacher = get_object_or_404(TeacherProfile, id=teacher_id)
+    #check  if the student is already enrolled 
+    if teacher  in  student.enrolled_teachers.all():
+        return  Response({'message':f"You are enrolled in the {teacher.name}'s course "},status = 400)
+    if teacher.seats <= 0 :
+        return  Response({'message':f"No seats are available for {teacher.name}'s course .. seats:{teacher.seats}"})
 
     # Add the teacher to the student's enrolled_teachers
     student.enrolled_teachers.add(teacher)
+    teacher.seats -=1
+    teacher.save()
 
     # Rebuild the student list and cache it
     cache_key = f"teacher:{teacher.id}:students"
@@ -29,4 +36,4 @@ def enroll_in_teacher(request, teacher_id):
     # Cache the updated data for 1 hour (3600 seconds)
     r.setex(cache_key, 3600, json.dumps(student_data))
 
-    return Response({"message": f"Enrolled in {teacher.name}'s course."})
+    return Response({"message": f"Enrolled in {teacher.name}'s course and  have {teacher.seats} seats now."})

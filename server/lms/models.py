@@ -22,11 +22,17 @@ class StudentProfile(models.Model):
 
 
 class  TeacherProfile(models.Model):
+    SLOT_CHOICES = (
+        ('morning', 'Morning'),
+        ('evening', 'Evening'),
+    )
     user =  models.OneToOneField(User,on_delete=models.CASCADE)
     name =  models.CharField(max_length=100)
     subject = models.CharField(max_length=100)
     fees = models.DecimalField(max_digits=10,decimal_places=2)
     duration = models.CharField(max_length=100)
+    seats =  models.PositiveBigIntegerField(default=10)
+    slot  =  models.CharField(max_length=10 ,  choices=SLOT_CHOICES,  default='morning')
 
 
     def __str__(self):

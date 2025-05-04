@@ -18,6 +18,8 @@ def exit_from_teacher(request,teacher_id):
     student  =  get_object_or_404(StudentProfile,user=request.user)
     teacher=get_object_or_404(TeacherProfile,id=teacher_id)
     student.enrolled_teachers.remove(teacher)
+    teacher.seats +=1
+    teacher.save()
     cache_key =  f"teacher:{teacher.id}:students"
     r.delete(cache_key)
-    return  JsonResponse({'message':f"Exited from  {teacher.name}'s course"})
+    return  JsonResponse({'message':f"Exited from  {teacher.name}'s course and have {teacher.seats} seats now "})
