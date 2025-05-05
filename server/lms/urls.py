@@ -15,6 +15,8 @@ from  .enrollment.EXIT.exit_views  import  exit_from_teacher
 from  .enrollment.LIST.list_views import  list_teacher_enrollments
 from  .updateteacherprofile.GET.get_teacher_profile import verify_admin_passkey
 from  .removeenrolledstudents.DELETE.remove_views import remove_student_from_enrollment
+from  .assignmentfromteacher.POST.assignment_views import  assign_task
+from  .assignmentfromteacher.REMOVE.delete_task import  delete_task
 
 urlpatterns = [
     
@@ -48,5 +50,10 @@ urlpatterns = [
     
     path('verify-passky/',verify_admin_passkey , name='verify-admin-passkey'),
     path('remove-student/<int:student_id>/', remove_student_from_enrollment, name='remove_student'),
+    
+    path('assign-task/<int:student_id>/', assign_task, name='assign_task'),
+    path('delete-task/<int:task_id>/', delete_task, name='delete_task'),
+
+    
 
 ]
