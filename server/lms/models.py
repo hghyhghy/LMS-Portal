@@ -68,9 +68,13 @@ class StudentAnswer(models.Model):
     selected_time  =  models.CharField(max_length=100)
     submitted_at = models.DateTimeField(auto_now_add=True)
     selected_answer =  models.CharField(max_length=255,default='N/A')
+    marks  =  models.FloatField(null=True,blank=True)
 
     class Meta:
         unique_together = ('student', 'task', 'question')  # Prevent duplicates
+        
+    def get_total_marks_for_task(self):
+        return  StudentAnswer.objects.filter(student =  self.student,  task=self.task).aggregate(total_marks =  models.Sum('marks'))['total_marks'] or 0
     
     def __str__(self):
         return f"Answer by {self.student.name} to Q{self.question.id}"
