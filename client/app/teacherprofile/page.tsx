@@ -8,6 +8,7 @@ import { verifyPasskey } from "../verifyapi/verify";
 import { useRouter } from "next/navigation";
 import { fetchStudents,type  Student } from "../enrolledstudentapi/GET/get";
 import { removeStudent } from "../removeregisteredstudents/DELETE/remove";
+import { CgGoogleTasks } from "react-icons/cg";
 
 export  default  function  Profilepage() {
     
@@ -28,8 +29,10 @@ export  default  function  Profilepage() {
     const [activeTab, setActiveTab] = useState<'profile' | 'students'>('profile');
     const [studentMessage, setStudentMessage] = useState("");
     const [availableSeats, setAvailableSeats] = useState <number |  null>(null)
+    const [showModal, setShowModal] = useState(false)
+    const [selectedStudent, setSelectedStudent] = useState<Student |  null>(null)
 
-    const handleVerify = async() =>  {
+    const handleVerify = async() =>  { 
         try {
             
             const msg =  await  verifyPasskey(adminKey)
@@ -127,20 +130,20 @@ export  default  function  Profilepage() {
     }
     
     return(
-            <div className="  flex  min-h-screen  bg-black">
-                <aside className="w-50 bg-gray-800 text-white p-6 hidden md:block">
+            <div className="  flex  min-h-screen  bg-[#E9EDEE]">
+                <aside className="w-40 bg-blue-500 text-white p-6 hidden md:block">
                     <h2 className="  text-xl  font-semibold  mb-4">
                         Dashboard
                     </h2>
                     <ul>
                     <li
-            className={`mb-2 uppercase cursor-pointer ${activeTab === 'profile' ? 'text-blue-400' : ''}`}
+            className={`mb-2 uppercase cursor-pointer ${activeTab === 'profile' ? ' text-black font-bold ' : ''}`}
             onClick={() => setActiveTab('profile')}
           >
             Profile
           </li>
           <li
-            className={`mb-2 uppercase cursor-pointer ${activeTab === 'students' ? 'text-blue-400' : ''}`}
+            className={`mb-2 uppercase cursor-pointer ${activeTab === 'students' ?  'text-black   font-bold ' : ''}`}
             onClick={() => setActiveTab('students')}
           >
             Students
@@ -235,7 +238,6 @@ export  default  function  Profilepage() {
           )
         ) : (
 <div className=" w-full p-2 ">
-  <h2 className="text-2xl font-semibold mb-6 absolute top-10   right-[40rem]">Enrolled Students</h2>
   {availableSeats !==  null && (
     <p  className="text-lg text-green-400 font-mono mb-4 ml-4">
          Available Seats: {availableSeats}
@@ -245,42 +247,70 @@ export  default  function  Profilepage() {
   {students.length === 0 ? (
     <p>No students enrolled.</p>
   ) : (
-    <div className="overflow-x-auto rounded-t-lg relative -top-50">
-      <div className="flex border-b border-gray-600 font-normal bg-[#0A0A0A]    rounded-t uppercase font-mono">
+    <div className="overflow-x-auto rounded relative -top-89 w-full">
+      <div className="flex border-b border-gray-600 font-normal bg-[#0165AC]   rounded-t uppercase font-mono">
         <div className="w-1/4 px-4 py-2">Name</div>
         <div className="w-1/4 px-4 py-2">Gender</div>
         <div className="w-1/4 px-4 py-2">Phone</div>
         <div className="w-1/4 px-4 py-2">Email</div>
       </div>
+      {students.map((student) => (
+  <div
+    key={student.id}
+    className="flex items-center border-b font-normal border-gray-500 text-blue-800"
+    onContextMenu={(e) => {
+      e.preventDefault(); // prevent default right-click menu
+      setSelectedStudent(student);
+      setShowModal(true);
+    }}
+  >
+    <div className="w-1/4 px-4 py-3">{student.name}</div>
+    <div className="w-1/4 px-10 py-3">{student.gender}</div>
+    <div className="w-1/4 px-15 py-3">{student.phone_number}</div>
+    <div className="w-1/4 px-4 py-3 text-gray-700 font-sans">{student.email}</div>
+    <button 
+    onClick={() => router.push(`/assignment/${student.id}`)}
+    className=" mr-4 cursor-pointer bg-black p-2 rounded-xl text-gray-300 flex flex-row gap-2">
+        <CgGoogleTasks  className=" text-2xl"/>
+        Assign
+    </button>
+  </div>
+))}
 
-      {students.map((student, index) => (
-        <div
-          key={index}
-          className="flex border-b font-semibold border-gray-500  text-gray-400 "
-        >
-          <div className="w-1/4 px-4 py-3">{student.name}</div>
-          <div className="w-1/4 px-10 py-3">{student.gender}</div>
-          <div className="w-1/4 px-15 py-3">{student.phone_number}</div>
-          <div className="w-1/4 px-4 py-3">{student.email}</div>
-          <button
-          onClick={ async  () =>  {
+{showModal && selectedStudent && (
+  <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg text-center">
+      <h2 className="text-lg font-semibold mb-4">
+        Remove {selectedStudent.name}?
+      </h2>
+      <button
+        onClick={async () => {
+          try {
+            const msg = await removeStudent(selectedStudent.id);
+            setStudentMessage(msg);
+            await loadStudents(); // reload list
+            setShowModal(false);
+          } catch (error: any) {
+            setStudentMessage(error.message);
+            setShowModal(false);
+          }
+        }}
+        className="bg-red-600 text-white px-4 py-2 rounded mr-4"
+      >
+        Remove
+      </button>
+      <button
+        onClick={() => setShowModal(false)}
+        className="bg-gray-400 text-white px-4 py-2 rounded"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
 
-            try {
-                const  msg  =  await  removeStudent(student.id)
-                setStudentMessage(msg)
-                await loadStudents()
-            } catch (error:any) {
-                setStudentMessage(error.message)
 
-            }
-          }}
-          className="bg-red-600 text-white px-3 py-1 rounded ml-4 text-sm hover:bg-red-700 cursor-pointer mt-1"
 
-          >     
-                Remove 
-          </button>
-        </div>
-      ))}
     </div>
   )}
 </div>
