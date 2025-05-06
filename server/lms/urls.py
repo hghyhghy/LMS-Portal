@@ -17,6 +17,8 @@ from  .updateteacherprofile.GET.get_teacher_profile import verify_admin_passkey
 from  .removeenrolledstudents.DELETE.remove_views import remove_student_from_enrollment
 from  .assignmentfromteacher.POST.assignment_views import  assign_task
 from  .assignmentfromteacher.REMOVE.delete_task import  delete_task
+from  .studentanswer.POST.answer_views import submit_exam
+from  .assignmarkstostudentanswer.GET_POST.assignmarks_views import grade_task_answers
 
 urlpatterns = [
     
@@ -53,6 +55,10 @@ urlpatterns = [
     
     path('assign-task/<int:student_id>/', assign_task, name='assign_task'),
     path('delete-task/<int:task_id>/', delete_task, name='delete_task'),
+    # submit exam for the students
+    path('submit-exam/<int:task_id>/', submit_exam, name='submit_exam'),
+    path('grade-task/<int:task_id>/<int:student_id>/', grade_task_answers, name='grade_task_answers'),
+
 
     
 
