@@ -19,6 +19,7 @@ from  .assignmentfromteacher.POST.assignment_views import  assign_task
 from  .assignmentfromteacher.REMOVE.delete_task import  delete_task
 from  .studentanswer.POST.answer_views import submit_exam
 from  .assignmarkstostudentanswer.GET_POST.assignmarks_views import grade_task_answers
+from  .getallassignedtask.GET.alltask_views  import get_assigned_task
 
 urlpatterns = [
     
@@ -58,6 +59,8 @@ urlpatterns = [
     # submit exam for the students
     path('submit-exam/<int:task_id>/', submit_exam, name='submit_exam'),
     path('grade-task/<int:task_id>/<int:student_id>/', grade_task_answers, name='grade_task_answers'),
+    path('my-tasks/', get_assigned_task, name='get_assigned_tasks'),
+
 
 
     
