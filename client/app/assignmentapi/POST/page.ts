@@ -13,7 +13,7 @@ type AssignTaskResponse = {
     const token = Cookies.get("access");
   
     const response = await axios.post<AssignTaskResponse>(
-      `${BASE_URL}/assign-task/${studentId}`,
+      `${BASE_URL}/assign-task/${studentId}/`,
       payload,
       {
         headers: {
@@ -23,7 +23,7 @@ type AssignTaskResponse = {
       }
     );
   
-    return response.data.message; // ✅ Now TypeScript knows this is a string
+    return response.data.message; 
   }
   
 
