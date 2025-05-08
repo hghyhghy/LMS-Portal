@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { fetchStudents,type  Student } from "../enrolledstudentapi/GET/get";
 import { removeStudent } from "../removeregisteredstudents/DELETE/remove";
 import { CgGoogleTasks } from "react-icons/cg";
+import { IoLogoCodepen } from "react-icons/io";
 
 export  default  function  Profilepage() {
     
@@ -103,16 +104,19 @@ export  default  function  Profilepage() {
 
     if (!isVerified){
         return (
-            <div className="min-h-screen flex justify-center items-center bg-gray-900">
-                    <div className="bg-white rounded-xl p-8 shadow-2xl w-96">
-                        <h2 className="text-xl font-semibold mb-4 text-center">
-                            Enter Admin Passkey 
+            <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex justify-center items-center z-50">
+                    <div className="bg-[#151B23] rounded-xl p-8 shadow-2xl w-80 h-80 flex flex-col items-center justify-center">
+                      <h1 className=" mb-2 text-5xl bg-[#151b23]">
+                      <IoLogoCodepen />
+                      </h1>
+                        <h2 className="text-xl font-semibold mb-4 text-center text-gray-300">
+                             Admin Passkey 
                         </h2>
                         <input 
                         type="password" 
                         value={adminKey ?  adminKey : ""}
                         onChange={(e) =>  setAdminKey(Number(e.target.value))}
-                        className="w-full p-2 border border-gray-300 rounded mb-4"
+                        className="w-full p-2 border border-gray-500  mb-4 outline-none rounded-lg"
 
                         />
                     {verifyError && (
@@ -120,7 +124,7 @@ export  default  function  Profilepage() {
                     )}
                     <button
                         onClick={handleVerify}
-                        className="bg-blue-600 w-full text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="bg-blue-600 w-full text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
                     >
                         Verify
                     </button>
@@ -130,11 +134,16 @@ export  default  function  Profilepage() {
     }
     
     return(
-            <div className="  flex  min-h-screen  bg-[#E9EDEE]">
+            <div className="  flex  min-h-screen  bg-[#151B23]">
                 <aside className="w-40 bg-blue-500 text-white p-6 hidden md:block">
                     <h2 className="  text-xl  font-semibold  mb-4">
                         Dashboard
                     </h2>
+                    <button 
+                    onClick={() => router.push('/allmytasks_teacher')}
+                    className="  uppercase relative  top-22 hover:text-black hover:font-bold">
+                      Tasks
+                    </button>
                     <ul>
                     <li
             className={`mb-2 uppercase cursor-pointer ${activeTab === 'profile' ? ' text-black font-bold ' : ''}`}
@@ -257,7 +266,7 @@ export  default  function  Profilepage() {
       {students.map((student) => (
   <div
     key={student.id}
-    className="flex items-center border-b font-normal border-gray-500 text-blue-800"
+    className="flex items-center border-b font-normal border-gray-500 text-blue-300"
     onContextMenu={(e) => {
       e.preventDefault(); // prevent default right-click menu
       setSelectedStudent(student);
@@ -267,19 +276,14 @@ export  default  function  Profilepage() {
     <div className="w-1/4 px-4 py-3">{student.name}</div>
     <div className="w-1/4 px-10 py-3">{student.gender}</div>
     <div className="w-1/4 px-15 py-3">{student.phone_number}</div>
-    <div className="w-1/4 px-4 py-3 text-gray-700 font-sans">{student.email}</div>
-    <button 
-    onClick={() => router.push(`/assignment/${student.id}`)}
-    className=" mr-4 cursor-pointer bg-black p-2 rounded-xl text-gray-300 flex flex-row gap-2">
-        <CgGoogleTasks  className=" text-2xl"/>
-        Assign
-    </button>
+    <div className="w-1/4 px-4 py-3 text-gray-300 font-sans">{student.email}</div>
+
   </div>
 ))}
 
 {showModal && selectedStudent && (
   <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex justify-center items-center z-50">
-    <div className="bg-white p-6 rounded shadow-lg text-center">
+    <div className="bg-white p-6 rounded shadow-lg text-center flex flex-col gap-5">
       <h2 className="text-lg font-semibold mb-4">
         Remove {selectedStudent.name}?
       </h2>
@@ -295,16 +299,22 @@ export  default  function  Profilepage() {
             setShowModal(false);
           }
         }}
-        className="bg-red-600 text-white px-4 py-2 rounded mr-4"
+        className="bg-red-600 text-white px-4 py-2 rounded mr-4 w-full"
       >
         Remove
       </button>
       <button
         onClick={() => setShowModal(false)}
-        className="bg-gray-400 text-white px-4 py-2 rounded"
+        className="bg-gray-400 text-white px-2 py-2 rounded"
       >
         Cancel
       </button>
+      <button 
+    onClick={() => router.push(`/assignment/${selectedStudent.id}`)}
+    className=" mr-4 cursor-pointer bg-blue-700 p-2 rounded text-gray-300 flex flex-row gap-2 w-full">
+        <CgGoogleTasks  className=" text-2xl"/>
+        Assign
+    </button>
     </div>
   </div>
 )}
