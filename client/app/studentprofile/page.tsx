@@ -117,8 +117,8 @@ export  default  function  ProfilePage() {
 
     return (
 
-        <div className=" flex  min-h-screen">
-            <aside className="w-64 bg-gray-800 text-white p-6 hidden md:block">
+        <div className=" flex  min-h-screen bg-[#151B23]">
+            <aside className="w-40 bg-blue-500 text-white p-6 hidden md:block">
             <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
                 <ul>
                 <li className="mb-2">Profile</li>
@@ -198,7 +198,7 @@ export  default  function  ProfilePage() {
                             <div className="col-span-2 flex justify-center">
   <button
     type="submit"
-    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 cursor-pointer"
+    className="bg-blue-600 text-white px-6 py-1 rounded-lg hover:bg-blue-700 cursor-pointer"
     disabled={updating}
   >
     {updating ? 'Updating...' : 'Update Profile'}
@@ -206,7 +206,7 @@ export  default  function  ProfilePage() {
   <button
   type="button"
   onClick={deleteProfile}
-  className="bg-[#333333] text-white px-6 py-2 rounded  ml-5 cursor-pointer"
+  className="bg-[#333333] text-white px-6 py-1 rounded-lg  ml-5 cursor-pointer"
 
   >
     Delete Profile
