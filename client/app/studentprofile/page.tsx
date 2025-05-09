@@ -4,7 +4,7 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 import { useEffect, useState } from "react"
-
+import { useRouter } from "next/navigation"
 type  Profile = {
     name:string,
     email:string,
@@ -14,6 +14,7 @@ type  Profile = {
 
 export  default  function  ProfilePage() {
 
+    const router    =  useRouter()
     const [profile, setProfile] = useState<Profile> ({
         name:"",
         email:"",
@@ -118,11 +119,18 @@ export  default  function  ProfilePage() {
     return (
 
         <div className=" flex  min-h-screen bg-[#151B23]">
-            <aside className="w-40 bg-blue-500 text-white p-6 hidden md:block">
-            <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
+            <aside className="w-40 bg-blue-500 text-white p-6 hidden md:block uppercase">
                 <ul>
                 <li className="mb-2">Profile</li>
                 <li className="mb-2">Settings</li>
+                <li>
+                    <button 
+                    className=" font-normal  text-shadow-black  uppercase cursor-pointer "
+                    onClick={() => router.push('/studenttasks')}
+                    >
+                        Exam Panel
+                    </button>
+                </li>
                 </ul>
             </aside>
 
