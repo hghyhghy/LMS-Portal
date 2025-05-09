@@ -21,6 +21,7 @@ from  .studentanswer.POST.answer_views import submit_exam
 from  .assignmarkstostudentanswer.GET_POST.assignmarks_views import grade_task_answers
 from  .getallassignedtask.GET.alltask_views  import get_assigned_task
 from  .showassignedtasktostudents.GET.show_views import student_assigned_task
+from  .showassignedquestions.GET.show_questions import student_view_task
 
 urlpatterns = [
     
@@ -63,10 +64,25 @@ urlpatterns = [
     path('my-tasks/', get_assigned_task, name='get_assigned_tasks'),
     
     path('student-tasks/', student_assigned_task, name='student_assigned_tasks'),
+    path('student-questions/<int:task_id>',student_view_task,name='student_view_task')
 
 
 
-
+#     1) {
+#   "task_id": 4,
+#   "title": "Maths Exam ",
+#   "deadline": "2025-05-09T09:10:00+00:00",
+#   "questions": [
+#     {
+#       "id": 7,
+#       "question_text": "What is the correct answer of 2+2 ?  ",
+#       "option1": "2",
+#       "option2": "3",
+#       "option3": "5",
+#       "option4": "4"
+#     }
+#   ]
+# }
     
 
 ]

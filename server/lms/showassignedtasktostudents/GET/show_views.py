@@ -25,7 +25,8 @@ def student_assigned_task(request):
         'task_id':task.id,
         'title':task.title,
         'deadline':task.deadline.isoformat(),
-        'teacher_name':task.teacher.name
+        'teacher_name':task.teacher.name,
+        'student':task.student.name
     } for task  in tasks]
     r.set(redis_key,json.dumps(data),ex=600)
     return  Response(data ,  status=status.HTTP_200_OK)
