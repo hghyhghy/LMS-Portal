@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from ...models import StudentProfile, Task, Question
+from ...models import StudentProfile, Task, Question,StudentAnswer
 import redis
 import json
 
@@ -14,6 +14,14 @@ r=  redis.Redis(host='localhost', port=6379 ,  db=0)
 def student_view_task(request,task_id):
     student  =  get_object_or_404(StudentProfile ,  user =  request.user)
     task   =  get_object_or_404(Task,id=task_id,student=student)
+    
+    # check whether the student has already submitted the task or not 
+    already_submitted  =  StudentAnswer.objects.filter(student=student,task=task).exists()
+    if  already_submitted:
+        return  Response(
+            {'error':"You have already submitted the Assignment can't resubmit"},
+            status=status.HTTP_403_FORBIDDEN
+            )
 
     redis_key  =  f"task:student:{student.id}:task:{task.id}"
     cached  =  r.get(redis_key)

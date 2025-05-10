@@ -15,9 +15,11 @@ def submit_exam(request,task_id):
     student =  get_object_or_404(StudentProfile,user=request.user)
     task =  get_object_or_404(Task,id=task_id,student=student)
 
-    #reject  if the deadline is missed 
-    # if timezone.now() > task.deadline:
-    #     return  Response({'message':'Could not submit answer as deadline is passed'}, status=status.HTTP_403_FORBIDDEN)
+    if StudentAnswer.objects.filter(student=student,task=task).exists():
+        return  Response (
+            {'error':'You have already submitted the examiation'},
+            status=status.HTTP_403_FORBIDDEN
+        )
 
     answers =  request.data.get('answers',{})
     if not isinstance(answers, dict) or not answers:
