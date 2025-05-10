@@ -64,7 +64,7 @@ urlpatterns = [
     path('my-tasks/', get_assigned_task, name='get_assigned_tasks'),
     
     path('student-tasks/', student_assigned_task, name='student_assigned_tasks'),
-    path('student-questions/<int:task_id>',student_view_task,name='student_view_task')
+    path('student-questions/<int:task_id>/',student_view_task,name='student_view_task')
 
 
 

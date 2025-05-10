@@ -27,7 +27,9 @@ def student_view_task(request,task_id):
         'task_id':task.id,
         'title':task.title,
         'deadline':task.deadline.isoformat(),
-        'questions':list(questions)
+        'questions':list(questions),
+        'student':student.name,
+        'count':questions.count()
     }
     
     r.set(redis_key,json.dumps(response_data), ex=600)
