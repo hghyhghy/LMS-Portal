@@ -67,22 +67,6 @@ urlpatterns = [
     path('student-questions/<int:task_id>/',student_view_task,name='student_view_task')
 
 
-
-#     1) {
-#   "task_id": 4,
-#   "title": "Maths Exam ",
-#   "deadline": "2025-05-09T09:10:00+00:00",
-#   "questions": [
-#     {
-#       "id": 7,
-#       "question_text": "What is the correct answer of 2+2 ?  ",
-#       "option1": "2",
-#       "option2": "3",
-#       "option3": "5",
-#       "option4": "4"
-#     }
-#   ]
-# }
     
 
 ]

@@ -26,7 +26,11 @@ def update_student_profile(request):
             
             if not all([name,email,phone_number,gender]):
                 return  JsonResponse({'message':'All fields are required'},status=400)
-            student_profile =  StudentProfile.objects.get(name=name)
+            token = request.headers.get('Authorization', '').split(' ')[-1]
+            decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = decoded_token.get('user_id')
+
+            student_profile = StudentProfile.objects.get(user_id=user_id)
 
             student_profile.name = name
             student_profile.phone_number=phone_number

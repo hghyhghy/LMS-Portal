@@ -33,7 +33,8 @@ def  grade_task_answers(request,task_id,student_id):
             'question': Questionserializers(ans.question).data,
             "selected_answer": ans.selected_answer,
             "submitted_at": ans.submitted_at.isoformat(),
-            "marks": ans.marks
+            "marks": ans.marks,
+            "student":ans.student.name
         } for ans in answers]
         total_marks = answers.aggregate(total_marks=Sum('marks'))['total_marks'] or 0
 
@@ -61,6 +62,7 @@ def  grade_task_answers(request,task_id,student_id):
                 
             except  StudentAnswer.DoesNotExist:
                 continue
+        r.delete(redis_key)
             
 
     return Response({
