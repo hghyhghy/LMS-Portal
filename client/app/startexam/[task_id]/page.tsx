@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { getStudentTask } from "@/app/studenquestionapi/GET/page" // Assuming these paths are correct
 import { submitExam } from "@/app/submitexam/POST/page" // Assuming these paths are correct
 import toast from 'react-hot-toast';
-// import Cookies from "js-cookie" // Cookies import was present but not used in the original code logic you provided
 import { IoLogoCodepen } from "react-icons/io";
 import { CiUser } from "react-icons/ci";
 import {
@@ -12,6 +11,7 @@ import {
   buildStyles,
 } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import  Cookies from  "js-cookie"
 
 export default function StudentExamPage() {
   const { task_id } = useParams();
@@ -25,6 +25,7 @@ export default function StudentExamPage() {
   // const warningCountRef = useRef(0); // This ref was initialized but not used
   const [timeLeft, setTimeLeft] = useState(600); // Initial time: 10 minutes
   const initialTime = 600; // Define initial time for progress bar calculation
+  const warningCountRef  = useRef(0)
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -45,6 +46,41 @@ export default function StudentExamPage() {
         fetchTask();
     }
   }, [task_id]);
+    useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        handleViolation();
+      }
+    };
+
+    const handleNavigationAttempt = () => {
+      handleViolation();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('popstate', handleNavigationAttempt); // Back/forward browser buttons
+    window.addEventListener('beforeunload', handleNavigationAttempt); // Reload or close
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('popstate', handleNavigationAttempt);
+      window.removeEventListener('beforeunload', handleNavigationAttempt);
+    };
+  }, []);
+
+  const handleViolation = () => {
+    warningCountRef.current += 1;
+    toast.error(`Tab switch detected! Attempt ${warningCountRef.current}/2`, { duration: 3000 });
+
+    if (warningCountRef.current >= 2) {
+      Cookies.remove('access_token'); // Remove token
+      toast.error('You have been logged out for violating exam rules.');
+      setTimeout(() => {
+        router.push('/login');
+      }, 100);
+    }
+  };
+
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -184,7 +220,7 @@ export default function StudentExamPage() {
             <button
               onClick={() => handleSubmit()}
               disabled={timeLeft === 0} // Disable if time is up (auto-submit will handle)
-              className="w-full bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-150 ease-in-out font-semibold text-lg disabled:bg-gray-400"
+              className=" cusror-pointer w-full bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-150 ease-in-out font-semibold text-lg disabled:bg-gray-400"
             >
               Submit Exam
             </button>

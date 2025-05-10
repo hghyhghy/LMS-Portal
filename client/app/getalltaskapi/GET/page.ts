@@ -5,7 +5,8 @@ type Task = {
     id: number
     title: string
     deadline: string
-    student_name: string
+    student_name: string,
+    student_id:number
   }
   
 
