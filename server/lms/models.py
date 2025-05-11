@@ -79,3 +79,10 @@ class StudentAnswer(models.Model):
     def __str__(self):
         return f"Answer by {self.student.name} to Q{self.question.id}"
     
+class ChatMessage(models.Model):
+    sender =  models.ForeignKey(User,on_delete=models.CASCADE ,related_name='send_message')
+    receiver = models.ForeignKey(User,on_delete=models.CASCADE,related_name='receive_message')
+    message =  models.TextField()
+    timestamp =  models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp}"
