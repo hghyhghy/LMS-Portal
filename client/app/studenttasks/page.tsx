@@ -9,7 +9,8 @@ type Task = {
     title: string,
     deadline: string,
     teacher_name: string,
-    student: string // Assuming this is the student's name or identifier
+    student: string,
+    marks_obtained:number
 }
 
 export default function StudentTasksPage() {
@@ -85,7 +86,7 @@ export default function StudentTasksPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-5xl mx-auto bg-gray-800 shadow-2xl rounded-xl p-6 sm:p-8">
+            <div className="max-w-8xl mx-auto bg-gray-800 shadow-2xl rounded-xl p-6 sm:p-8">
                 <h1 className="text-3xl sm:text-4xl font-bold text-center text-blue-400 mb-8 tracking-tight">
                     Pending Exams
                 </h1>
@@ -107,7 +108,7 @@ export default function StudentTasksPage() {
                         <table className="w-full min-w-max">
                             <thead className="bg-gray-700">
                                 <tr>
-                                    {["Sl no", "Task Title", "Deadline", "Teacher", "Assigned To"].map(header => (
+                                    {["Sl no", "Task Title", "Deadline", "Teacher", "Assigned To", "Grand Total"].map(header => (
                                         <th key={header} className="py-3.5 px-5 text-left text-sm font-semibold text-blue-300 uppercase tracking-wider">
                                             {header}
                                         </th>
@@ -124,8 +125,10 @@ export default function StudentTasksPage() {
                                         <td className="py-4 px-5 text-sm text-gray-300 font-medium">{index + 1}</td>
                                         <td className="py-4 px-5 text-sm text-gray-200 font-semibold">{task.title}</td>
                                         <td className="py-4 px-5 text-sm text-gray-400">{formatDate(task.deadline)}</td>
-                                        <td className="py-4 px-5 text-sm text-gray-300">{task.teacher_name}</td>
-                                        <td className="py-4 px-5 text-sm text-gray-300">{task.student}</td>
+                                        <td className="py-4 px-6 text-sm text-gray-300">{task.teacher_name}</td>
+                                        <td className="py-4 px-6 text-sm text-gray-300">{task.student}</td>
+                                        <td className="py-4 px-15 text-sm text-gray-100 font-mono">{task.marks_obtained}</td>
+
                                     </tr>
                                 ))}
                             </tbody>
